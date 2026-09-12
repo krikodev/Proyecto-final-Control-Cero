@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -19,6 +20,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
+        'dni',
         'email',
         'password',
     ];
@@ -43,6 +46,25 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
+
+    public function role(): BelongsTo
+{
+    return $this->belongsTo(Role::class);
+}
+
+public function hasPermission(string $permission): bool
+{
+    if (! $this->is_active || $this->role_id === null) {
+        return false;
+    }
+
+    return $this->role()
+        ->whereHas('permissions', function ($query) use ($permission) {
+            $query->where('permissions.slug', $permission);
+        })
+        ->exists();
+}
 }
