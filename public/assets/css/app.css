@@ -329,6 +329,8 @@ a.pagination-link:hover {
     align-items: center;
     gap: 12px;
     margin-top: 24px;
+    justify-content: end;
+    padding-right: 25px
 }
 
 .btn-primary {

@@ -25,7 +25,7 @@ Route::middleware(['auth', EnsureAccountIsActive::class])->group(function () {
         ->names('users');
 
     Route::get('/usuarios/buscar', [UserController::class, 'search'])
-        ->name('users.search');
+        ->name('users.search');         
 
     Route::patch('/usuarios/{user}/estado', [UserController::class, 'updateStatus'])
         ->middleware('can:usuarios.activar')

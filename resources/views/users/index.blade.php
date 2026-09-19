@@ -84,7 +84,7 @@
                             <td>
                                 <div class="row-actions">
                                     @can('usuarios.editar')
-                                        <a href="{{ route('users.edit', $user) }}"
+                                        <a href="{{ route('users.edit', $user->id) }}"
                                         class="pagination-link"
                                         aria-label="Editar a {{ $user->name }} {{ $user->last_name }}">
                                             Editar

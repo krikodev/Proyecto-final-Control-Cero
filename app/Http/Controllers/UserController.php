@@ -107,6 +107,7 @@ public function store(StoreUserRequest $request): RedirectResponse
     public function update(
         UpdateUserRequest $request,
         User $user
+
     ): RedirectResponse {
         $data = $request->validated();
 
@@ -125,6 +126,7 @@ public function store(StoreUserRequest $request): RedirectResponse
             ->route('users.index', $user)
             ->with('success', 'Usuario actualizado correctamente.');
     }
+    
     public function updateStatus(
         UpdateUserStatusRequest $request,
         User $user,
