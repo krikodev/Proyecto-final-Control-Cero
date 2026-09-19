@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\Role;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Requests\Users\UpdateUserStatusRequest;
@@ -30,6 +32,42 @@ class UserController extends Controller
             ]);
 
         return view('users.index', compact('users'));
+    }
+
+    public function search(Request $request): JsonResponse
+    {
+        $query = $request->input('q', '');
+        $authUser = $request->user();
+
+        $users = User::query()
+            ->with('role:id,name')
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('last_name', 'like', "%{$query}%")
+                  ->orWhere('dni', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%")
+                  ->orWhereHas('role', function ($rq) use ($query) {
+                      $rq->where('name', 'like', "%{$query}%");
+                  });
+            })
+            ->latest('id')
+            ->paginate(10, [
+                'id',
+                'name',
+                'last_name',
+                'dni',
+                'email',
+                'role_id',
+                'is_active',
+            ]);
+
+        $users->getCollection()->transform(function ($user) use ($authUser) {
+            $user->can_edit = $authUser->can('usuarios.editar');
+            $user->can_activate = $authUser->can('usuarios.activar') && $user->id !== $authUser->id;
+            return $user;
+        });
+
+        return response()->json($users);
     }
     public function create(): View
 {

@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
     <title>@yield('title', 'Inicio') · Control ATS</title>
 
 </head>
-<body>
+<body data-auth-id="{{ auth()->id() }}">
     <div class="app">
         <aside class="sidebar">
             <a href="{{ route('dashboard') }}" class="brand">

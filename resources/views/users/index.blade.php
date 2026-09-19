@@ -18,12 +18,27 @@
             </div>
         @endcan
         <div class="panel-header">
-            <h2 id="users-title">Cuentas del sistema</h2>
+            <div class="panel-header-row">
+                <div>
+                    <h2 id="users-title">Cuentas del sistema</h2>
 
-            <p class="panel-description muted">
-                {{ $users->total() }}
-                {{ $users->total() === 1 ? 'usuario registrado' : 'usuarios registrados' }}.
-            </p>
+                    <p class="panel-description muted">
+                        {{ $users->total() }}
+                        {{ $users->total() === 1 ? 'usuario registrado' : 'usuarios registrados' }}.
+                    </p>
+                </div>
+
+                <div class="search-box">
+                    <input
+                        type="search"
+                        id="user-search"
+                        class="search-input"
+                        placeholder="Buscar por nombre, DNI, correo o rol..."
+                        aria-label="Buscar usuarios"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
         </div>
 
         <div class="table-scroll">
@@ -157,4 +172,6 @@
             </nav>
         @endif
     </section>
+
+    <script src="{{ asset('assets/js/users-search.js') }}"></script>
 @endsection
