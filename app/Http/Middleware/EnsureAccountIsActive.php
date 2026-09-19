@@ -13,14 +13,14 @@ class EnsureAccountIsActive
     {
         $user = $request->user();
 
-        if (! $user || ! $user->is_active || ! $user->role()->exists()) {
+        if (! $user || ! $user->canAccessWeb()) {
             Auth::logout();
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return redirect()->route('login')->withErrors([
-                'email' => 'Tu cuenta no tiene acceso. Consulta al administrador.',
+                'email' => 'Tu cuenta no tiene acceso al panel web.',
             ]);
         }
 

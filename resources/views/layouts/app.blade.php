@@ -18,11 +18,13 @@
             <p class="nav-label">Espacio de trabajo</p>
 
             <nav aria-label="Navegación principal">
-                <a href="{{ route('dashboard') }}"
-                   class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                   @if(request()->routeIs('dashboard')) aria-current="page" @endif>
-                    Inicio
-                </a>
+                @can('usuarios.ver')
+                    <a href="{{ route('users.index') }}"
+                    class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('users.*')) aria-current="page" @endif>
+                        Usuarios
+                    </a>
+                @endcan
             </nav>
 
             <div class="account">

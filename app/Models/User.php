@@ -50,6 +50,14 @@ class User extends Authenticatable
         ];
     }
 
+    public function canAccessWeb(): bool
+    {
+        return (bool) $this->is_active
+            && $this->role()
+                ->whereIn('slug', ['administrador', 'supervisor'])
+                ->exists();
+    }
+
     public function role(): BelongsTo
 {
     return $this->belongsTo(Role::class);
