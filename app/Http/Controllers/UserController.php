@@ -18,120 +18,53 @@ class UserController extends Controller
 {
     public function index(): View
     {
-        $users = User::query()
-            ->with('role:id,name')
-            ->latest('id')
-            ->paginate(10, [
-                'id',
-                'name',
-                'last_name',
-                'dni',
-                'email',
-                'role_id',
-                'is_active',
-            ]);
+        $users = User::paginate(7);
 
         return view('users.index', compact('users'));
     }
 
-    public function search(Request $request): JsonResponse
-    {
-        $query = $request->input('q', '');
-        $authUser = $request->user();
-
-        $users = User::query()
-            ->with('role:id,name')
-            ->where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('last_name', 'like', "%{$query}%")
-                  ->orWhere('dni', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%")
-                  ->orWhereHas('role', function ($rq) use ($query) {
-                      $rq->where('name', 'like', "%{$query}%");
-                  });
-            })
-            ->latest('id')
-            ->paginate(10, [
-                'id',
-                'name',
-                'last_name',
-                'dni',
-                'email',
-                'role_id',
-                'is_active',
-            ]);
-
-        $users->getCollection()->transform(function ($user) use ($authUser) {
-            $user->can_edit = $authUser->can('usuarios.editar');
-            $user->can_activate = $authUser->can('usuarios.activar') && $user->id !== $authUser->id;
-            return $user;
-        });
-
-        return response()->json($users);
-    }
     public function create(): View
-{
-    $roles = Role::query()
-        ->whereIn('slug', ['supervisor', 'operador'])
-        ->orderBy('name')
-        ->get(['id', 'name']);
+    {
+        $roles = Role::query()
+            ->whereIn('slug', ['supervisor', 'operador'])
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
-    return view('users.create', compact('roles'));
-}
+        return view('users.create', compact('roles'));
+    }
 
-public function store(StoreUserRequest $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         $data = $request->validated();
 
-        $user = new User();
-        $user->name = $data['name'];
-        $user->last_name = $data['last_name'];
-        $user->dni = $data['dni'];
-        $user->email = $data['email'];
-        $user->role_id = $data['role_id'];
-        $user->password = Hash::make($data['password']);
-        $user->is_active = true;
-        $user->save();
+        User::create($data);
 
         return redirect()
             ->route('users.index')
             ->with('success', 'Usuario creado correctamente.');
     }
-    public function edit(User $user): View
+    public function edit(string $id): View
     {
-        $user->load('role:id,name');
+        $user = User::findOrFail($id);
 
         return view('users.edit', compact('user'));
     }
 
-    public function update(
-        UpdateUserRequest $request,
-        User $user
-
-    ): RedirectResponse {
+    public function update(UpdateUserRequest $request, string $id): RedirectResponse
+    {
         $data = $request->validated();
 
-        $user->name = $data['name'];
-        $user->last_name = $data['last_name'];
-        $user->dni = $data['dni'];
-        $user->email = $data['email'];
+        $user = User::findOrFail($id);
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($data['password']);
-        }
-
-        $user->save();
+        $user->update($data);
 
         return redirect()
-            ->route('users.index', $user)
+            ->route('users.index')
             ->with('success', 'Usuario actualizado correctamente.');
     }
-    
-    public function updateStatus(
-        UpdateUserStatusRequest $request,
-        User $user,
-        UpdateUserStatusService $service
-    ): RedirectResponse {
+
+    public function updateStatus(UpdateUserStatusRequest $request,User $user,UpdateUserStatusService $service): RedirectResponse
+    {
         $isActive = $request->boolean('is_active');
 
         $service->handle(
@@ -143,8 +76,8 @@ public function store(StoreUserRequest $request): RedirectResponse
         return back()->with(
             'success',
             $isActive
-                ? 'La cuenta está activa.'
-                : 'La cuenta está inactiva.'
+            ? 'La cuenta está activa.'
+            : 'La cuenta está inactiva.'
         );
     }
 }

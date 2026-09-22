@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
-        $user = $this->route('user');
+        $user = $this->route('usuario');
 
         return [
             'name' => ['required', 'string', 'max:255'],
@@ -46,19 +46,6 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($user),
             ],
 
-            'password' => [
-                'nullable',
-                'required_with:password_confirmation',
-                'string',
-                'min:12',
-                'confirmed',
-            ],
-
-            'password_confirmation' => [
-                'nullable',
-                'required_with:password',
-                'string',
-            ],
 
             'role_id' => ['prohibited'],
             'is_active' => ['prohibited'],
@@ -80,8 +67,6 @@ class UpdateUserRequest extends FormRequest
             'email.email' => 'Ingresa un correo electrónico válido.',
             'email.unique' => 'Ese correo pertenece a otro usuario.',
 
-            'password.min' => 'La contraseña debe tener al menos 12 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
         ];
     }
 
@@ -92,8 +77,6 @@ class UpdateUserRequest extends FormRequest
             'last_name' => 'apellidos',
             'dni' => 'DNI',
             'email' => 'correo electrónico',
-            'password' => 'contraseña',
-            'password_confirmation' => 'confirmación de contraseña',
             'role_id' => 'rol',
             'is_active' => 'estado',
         ];

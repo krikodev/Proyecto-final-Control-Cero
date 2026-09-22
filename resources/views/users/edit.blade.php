@@ -9,9 +9,19 @@
         Actualiza los datos de {{ $user->name }} {{ $user->last_name }}.
     </p>
 
-    @if(session('success'))
+    @if (session('success'))
         <div class="notice-success" role="status">
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="notice-error" role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
@@ -25,84 +35,29 @@
             </p>
         </div>
 
-        <form method="POST"
-              action="{{ url('/usuarios/' . $user->id) }}"
-              class="user-form">
+        <form method="POST" action="{{ route('users.update', $user->id) }}" class="user-form">
             @csrf
             @method('PUT')
 
             <div class="form-grid">
-                @foreach([
-                    'name' => ['Nombres', 'text', 255],
-                    'last_name' => ['Apellidos', 'text', 100],
-                    'dni' => ['DNI', 'text', 8],
-                    'email' => ['Correo electrónico', 'email', 255],
-                ] as $field => [$label, $type, $length])
-                    <div class="form-field">
-                        <label for="{{ $field }}">{{ $label }}</label>
+                <div class="form-field">
+                    <label for="name">Nombre: </label>
+                    <input id="name" type="text" name="name" value="{{ old('name', $user->name) }}">
+                    @error('name')<span class="field-error">{{ $message }}</span>@enderror
 
-                        <input
-                            id="{{ $field }}"
-                            name="{{ $field }}"
-                            type="{{ $type }}"
-                            value="{{ old($field, $user->{$field}) }}"
-                            maxlength="{{ $length }}"
-                            required
-                            @if($field === 'dni')
-                                inputmode="numeric"
-                                pattern="[0-9]{8}"
-                            @endif
-                            @error($field)
-                                aria-invalid="true"
-                                aria-describedby="{{ $field }}-error"
-                            @enderror
-                        >
+                    <label for="last_name">Apellidos: </label>
+                    <input id="last_name" type="text" name="last_name" value="{{ old('last_name', $user->last_name) }}">
+                    @error('last_name')<span class="field-error">{{ $message }}</span>@enderror
 
-                        @error($field)
-                            <p id="{{ $field }}-error" class="field-error">
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-                @endforeach
+                    <label for="dni">DNI: </label>
+                    <input id="dni" type="text" name="dni" value="{{ old('dni', $user->dni) }}">
+                    @error('dni')<span class="field-error">{{ $message }}</span>@enderror
 
-                <div class="form-wide">
-                    <h2>Cambiar contraseña</h2>
-
-                    <p class="field-help">
-                        Deja ambos campos vacíos para conservar la actual.
-                        Si ingresas una nueva, utiliza al menos 12 caracteres.
-                    </p>
+                    <label for="email">Email: </label>
+                    <input id="email" type="text" name="email" value="{{ old('email', $user->email) }}">
+                    @error('email')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
-
-                @foreach([
-                    'password' => 'Nueva contraseña',
-                    'password_confirmation' => 'Confirmar nueva contraseña',
-                ] as $field => $label)
-                    <div class="form-field">
-                        <label for="{{ $field }}">{{ $label }}</label>
-
-                        <input
-                            id="{{ $field }}"
-                            name="{{ $field }}"
-                            type="password"
-                            autocomplete="new-password"
-                            minlength="12"
-                            @error($field)
-                                aria-invalid="true"
-                                aria-describedby="{{ $field }}-error"
-                            @enderror
-                        >
-
-                        @error($field)
-                            <p id="{{ $field }}-error" class="field-error">
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-                @endforeach
             </div>
-
             <div class="form-actions">
                 <button type="submit" class="btn-primary">
                     Guardar cambios
@@ -114,6 +69,7 @@
                     </a>
                 @endcan
             </div>
+
         </form>
     </section>
 @endsection
