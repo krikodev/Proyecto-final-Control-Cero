@@ -35,6 +35,22 @@
                         Máquinas
                     </a>
                 @endcan
+
+                @canAny(['ats.ver_propios', 'ats.ver_todos'])
+                    <a href="{{ auth()->user()->can('ats.ver_todos') ? route('ats.records') : route('ats.mine') }}"
+                       class="nav-link {{ request()->routeIs('ats.*') ? 'nav-link-active' : '' }}"
+                       @if (request()->routeIs('ats.*')) aria-current="page" @endif>
+                        Registro EPP/ATS
+                    </a>
+                @endcanAny
+
+                @can('ats.gestionar')
+                    <a href="{{ route('ats.questions.index') }}"
+                       class="nav-link {{ request()->routeIs('ats.questions.*') ? 'nav-link-active' : '' }}"
+                       @if (request()->routeIs('ats.questions.*')) aria-current="page" @endif>
+                        Preguntas ATS
+                    </a>
+                @endcan
             </nav>
 
             <div class="mt-auto px-1 pt-9">

@@ -44,11 +44,12 @@ class AuthorizationTest extends TestCase
         $this->actingAs($supervisor)->get('/usuarios/create')->assertForbidden();
     }
 
-    public function test_operator_has_no_web_access(): void
+    public function test_operator_lands_on_their_record_module(): void
     {
         $operator = $this->makeActiveUserWithRole('Operador');
 
-        $this->actingAs($operator)->get('/usuarios')->assertRedirect(route('login'));
+        $this->actingAs($operator)->get('/dashboard')->assertRedirect(route('ats.mine'));
+        $this->actingAs($operator)->get('/usuarios')->assertForbidden();
     }
 
     public function test_inactive_user_is_logged_out(): void

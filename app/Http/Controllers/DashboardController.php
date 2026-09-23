@@ -3,14 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    /**
+     * Los operadores no administran el sistema: aterrizan directamente
+     * en su módulo de registro EPP/ATS (donde ven sus máquinas).
+     */
+    public function index(): View|RedirectResponse
     {
+        if (Gate::allows('ats.ver_propios') && ! Gate::allows('usuarios.ver')) {
+            return redirect()->route('ats.mine');
+        }
+
         $stats = [];
         $recentUsers = collect();
 

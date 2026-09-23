@@ -39,11 +39,11 @@ class MachineManagementTest extends TestCase
         $this->actingAs($supervisor)->get('/maquinas/create')->assertForbidden();
     }
 
-    public function test_operator_has_no_web_access(): void
+    public function test_operator_cannot_open_the_machines_module(): void
     {
         $operator = $this->makeActiveUserWithRole('Operador');
 
-        $this->actingAs($operator)->get('/maquinas')->assertRedirect(route('login'));
+        $this->actingAs($operator)->get('/maquinas')->assertForbidden();
     }
 
     public function test_admin_can_create_a_machine_with_enabled_users(): void

@@ -106,7 +106,7 @@
                     @enderror
 
                     <p class="field-help">
-                        Supervisor: panel web. Operador: aplicación móvil.
+                        Los tres roles entran al panel web: el operador únicamente ve su registro EPP/ATS.
                     </p>
                 </div>
 

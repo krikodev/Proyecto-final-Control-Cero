@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Ats\MyRecordController;
+use App\Http\Controllers\Ats\QuestionController;
+use App\Http\Controllers\Ats\RecordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MachineController;
@@ -68,6 +71,48 @@ Route::middleware(['auth', EnsureAccountIsActive::class])->group(function () {
     Route::patch('/maquinas/{machine}/estado', [MachineController::class, 'updateStatus'])
         ->middleware('can:maquinas.activar')
         ->name('machines.status');
+
+    // ── Registro EPP/ATS ───────────────────────────────────────────
+    Route::prefix('registro')->name('ats.')->group(function () {
+        Route::get('/', [MyRecordController::class, 'index'])
+            ->middleware('can:ats.ver_propios')
+            ->name('mine');
+
+        Route::get('/iniciar/{machine}', [MyRecordController::class, 'create'])
+            ->middleware('can:ats.crear')
+            ->name('start');
+
+        Route::post('/iniciar/{machine}', [MyRecordController::class, 'store'])
+            ->middleware('can:ats.crear')
+            ->name('store');
+
+        Route::get('/finalizar', [MyRecordController::class, 'finish'])
+            ->middleware('can:ats.cerrar_propios')
+            ->name('finish');
+
+        Route::post('/finalizar/{record}', [MyRecordController::class, 'storeFinish'])
+            ->middleware('can:ats.cerrar_propios')
+            ->name('finish.store');
+    });
+
+    // ── Supervisión de registros (solo consulta) ───────────────────
+    Route::get('/registros', [RecordController::class, 'index'])
+        ->middleware('can:ats.ver_todos')
+        ->name('ats.records');
+
+    Route::get('/registros/{record}', [RecordController::class, 'show'])
+        ->name('ats.show'); // el dueño o ats.ver_todos, según el controlador
+
+    // ── Preguntas del ATS (CRUD) ───────────────────────────────────
+    Route::prefix('preguntas')->name('ats.questions.')->middleware('can:ats.gestionar')->group(function () {
+        Route::get('/', [QuestionController::class, 'index'])->name('index');
+        Route::get('/create', [QuestionController::class, 'create'])->name('create');
+        Route::post('/', [QuestionController::class, 'store'])->name('store');
+        Route::get('/{question}/edit', [QuestionController::class, 'edit'])->name('edit');
+        Route::match(['put', 'patch'], '/{question}', [QuestionController::class, 'update'])->name('update');
+        Route::patch('/{question}/estado', [QuestionController::class, 'updateStatus'])->name('status');
+        Route::delete('/{question}', [QuestionController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])

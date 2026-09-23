@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -56,7 +57,7 @@ class User extends Authenticatable
     public function canAccessWeb(): bool
     {
         return (bool) $this->is_active
-            && $this->hasAnyRole(['Administrador', 'Supervisor']);
+            && $this->hasAnyRole(['Administrador', 'Supervisor', 'Operador']);
     }
 
     /**
@@ -65,5 +66,15 @@ class User extends Authenticatable
     public function machines(): BelongsToMany
     {
         return $this->belongsToMany(Machine::class)->orderBy('machines.name');
+    }
+
+    /**
+     * Registros de turno (EPP/ATS) de este usuario.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ShiftRecord, $this>
+     */
+    public function atsRecords(): HasMany
+    {
+        return $this->hasMany(ShiftRecord::class);
     }
 }

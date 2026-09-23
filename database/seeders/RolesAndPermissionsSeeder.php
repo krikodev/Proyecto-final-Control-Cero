@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AtsQuestion;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -31,6 +32,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'ats.crear' => 'Registrar apertura de ATS',
             'ats.cerrar_propios' => 'Cerrar sus propios ATS',
             'ats.revisar' => 'Revisar y firmar ATS como responsable',
+            'ats.gestionar' => 'Administrar las preguntas del ATS',
 
             'reportes.ver' => 'Consultar reportes',
 
@@ -57,6 +59,7 @@ class RolesAndPermissionsSeeder extends Seeder
                     'habilitaciones.gestionar',
                     'ats.ver_todos',
                     'ats.revisar',
+                    'ats.gestionar',
                     'reportes.ver',
 
                     'maquinas.ver',
@@ -86,7 +89,6 @@ class RolesAndPermissionsSeeder extends Seeder
                     'ats.ver_propios',
                     'ats.crear',
                     'ats.cerrar_propios',
-                    'maquinas.ver',
                 ],
             ],
         ];
@@ -119,7 +121,40 @@ class RolesAndPermissionsSeeder extends Seeder
             $role->syncPermissions($permissionIds);
         }
 
+        $this->seedAtsQuestions();
+
         // La caché de Spatie debe vaciarse tras tocar permisos/pivotes.
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+    }
+
+    /**
+     * Preguntas de ejemplo del ATS (el administrador puede editarlas o
+     * desactivarlas desde el módulo "Preguntas ATS").
+     */
+    private function seedAtsQuestions(): void
+    {
+        $questions = [
+            ['stage' => 'start', 'position' => 1, 'title' => '¿El área de trabajo se encuentra despejada y en condiciones seguras?'],
+            ['stage' => 'start', 'position' => 2, 'title' => '¿La máquina pasó la inspección visual antes del uso?'],
+            ['stage' => 'start', 'position' => 3, 'title' => '¿Se verificó que los resguardos de seguridad estén colocados?'],
+            ['stage' => 'start', 'position' => 4, 'title' => '¿El operador conoce el procedimiento de emergencia del área?'],
+            ['stage' => 'start', 'position' => 5, 'title' => '¿Se coordinó el inicio de la actividad con el responsable del turno?'],
+
+            ['stage' => 'finish', 'position' => 1, 'title' => '¿Se realizó la limpieza del área de trabajo?'],
+            ['stage' => 'finish', 'position' => 2, 'title' => '¿La máquina quedó apagada y en condiciones seguras?'],
+            ['stage' => 'finish', 'position' => 3, 'title' => '¿Se reportaron incidentes o condiciones inseguras durante la actividad?'],
+            ['stage' => 'finish', 'position' => 4, 'title' => '¿Se devolvió el EPP y las herramientas a su lugar?'],
+            ['stage' => 'finish', 'position' => 5, 'title' => '¿Se completó la documentación del turno?'],
+        ];
+
+        foreach ($questions as $question) {
+            AtsQuestion::updateOrCreate(
+                [
+                    'stage' => $question['stage'],
+                    'title' => $question['title'],
+                ],
+                ['position' => $question['position'], 'is_active' => true]
+            );
+        }
     }
 }
