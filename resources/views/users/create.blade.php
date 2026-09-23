@@ -3,23 +3,33 @@
 @section('title', 'Crear usuario')
 
 @section('content')
-    <h1>Crear usuario</h1>
+    <h1 class="text-2xl font-semibold tracking-tight lg:text-[28px]">Crear usuario</h1>
 
-    <p class="intro muted">
+    <p class="mt-2 text-sm leading-relaxed text-zinc-500">
         Registra una cuenta de supervisor u operador.
     </p>
 
-    @if(session('success'))
+    @if (session('success'))
         <div class="notice-success" role="status">
             {{ session('success') }}
         </div>
     @endif
 
-    <section class="panel">
-        <div class="panel-header">
-            <h2>Datos de la cuenta</h2>
+    @if ($errors->any())
+        <div class="notice-error" role="alert">
+            <ul class="list-inside list-disc">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <p class="panel-description muted">
+    <section class="panel mt-6">
+        <div class="panel-header">
+            <h2 class="text-base font-semibold">Datos de la cuenta</h2>
+
+            <p class="mt-1.5 text-[13px] leading-relaxed text-zinc-500">
                 Todos los campos son obligatorios.
                 La cuenta se creará activa.
             </p>
@@ -27,23 +37,24 @@
 
         <form method="POST"
               action="{{ route('users.store') }}"
-              class="user-form">
+              class="max-w-3xl px-6 py-6">
             @csrf
 
-            <div class="form-grid">
+            <div class="grid gap-5 sm:grid-cols-2">
                 @foreach([
                     'name' => ['Nombres', 'text', 255],
                     'last_name' => ['Apellidos', 'text', 100],
                     'dni' => ['DNI', 'text', 8],
                     'email' => ['Correo electrónico', 'email', 255],
                 ] as $field => [$label, $type, $length])
-                    <div class="form-field">
-                        <label for="{{ $field }}">{{ $label }}</label>
+                    <div>
+                        <label for="{{ $field }}" class="label">{{ $label }}</label>
 
                         <input
                             id="{{ $field }}"
                             name="{{ $field }}"
                             type="{{ $type }}"
+                            class="input"
                             value="{{ old($field) }}"
                             maxlength="{{ $length }}"
                             required
@@ -65,12 +76,13 @@
                     </div>
                 @endforeach
 
-                <div class="form-field form-wide">
-                    <label for="role_id">Rol</label>
+                <div class="sm:col-span-2">
+                    <label for="role_id" class="label">Rol</label>
 
                     <select
                         id="role_id"
                         name="role_id"
+                        class="input"
                         required
                         @error('role_id')
                             aria-invalid="true"
@@ -102,13 +114,14 @@
                     'password' => 'Contraseña',
                     'password_confirmation' => 'Confirmar contraseña',
                 ] as $field => $label)
-                    <div class="form-field">
-                        <label for="{{ $field }}">{{ $label }}</label>
+                    <div>
+                        <label for="{{ $field }}" class="label">{{ $label }}</label>
 
                         <input
                             id="{{ $field }}"
                             name="{{ $field }}"
                             type="password"
+                            class="input"
                             autocomplete="new-password"
                             @error($field)
                                 aria-invalid="true"
@@ -129,13 +142,13 @@
                 Utiliza una contraseña de al menos 12 caracteres.
             </p>
 
-            <div class="form-actions">
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
                 <button type="submit" class="btn-primary">
                     Guardar usuario
                 </button>
 
                 @can('usuarios.ver')
-                    <a href="{{ route('users.index') }}" class="pagination-link">
+                    <a href="{{ route('users.index') }}" class="btn-secondary min-h-11">
                         Volver al listado
                     </a>
                 @endcan

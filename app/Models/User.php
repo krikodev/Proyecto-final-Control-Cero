@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +23,7 @@ class User extends Authenticatable
         'last_name',
         'dni',
         'email',
+        'password',
     ];
 
     /**
@@ -49,29 +50,20 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * ¿Puede la cuenta entrar al panel web?
+     */
     public function canAccessWeb(): bool
     {
         return (bool) $this->is_active
-            && $this->role()
-                ->whereIn('slug', ['administrador', 'supervisor'])
-                ->exists();
+            && $this->hasAnyRole(['Administrador', 'Supervisor']);
     }
 
-    public function role(): BelongsTo
-{
-    return $this->belongsTo(Role::class);
-}
-
-public function hasPermission(string $permission): bool
-{
-    if (! $this->is_active || $this->role_id === null) {
-        return false;
+    /**
+     * Máquinas habilitadas para este usuario.
+     */
+    public function machines(): BelongsToMany
+    {
+        return $this->belongsToMany(Machine::class)->orderBy('machines.name');
     }
-
-    return $this->role()
-        ->whereHas('permissions', function ($query) use ($permission) {
-            $query->where('permissions.slug', $permission);
-        })
-        ->exists();
-}
 }

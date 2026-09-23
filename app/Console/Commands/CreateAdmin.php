@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class CreateAdmin extends Command
 {
@@ -81,8 +81,8 @@ class CreateAdmin extends Command
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
         $user->is_active = true;
-        $user->role()->associate($role);
         $user->save();
+        $user->assignRole($role);
 
         $this->info('Cuenta administradora creada correctamente.');
 

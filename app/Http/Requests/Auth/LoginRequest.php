@@ -62,7 +62,7 @@ class LoginRequest extends FormRequest
         $credentials['is_active'] = true;
 
         $credentials[] = function ($query) {
-            $query->whereHas('role');
+            $query->whereHas('roles');
         };
 
         if (! Auth::attempt($credentials)) {

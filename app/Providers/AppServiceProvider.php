@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Models\User;
-use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,38 +16,14 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
+     *
+     * Los permisos los registra spatie/laravel-permission en el Gate
+     * (Gate::before → checkPermissionTo), por lo que no hace falta
+     * definirlos a mano: @can, can() y el middleware "can:..." usan
+     * directamente los permisos de la base de datos.
      */
     public function boot(): void
-{
-    $permissions = [
-        'usuarios.ver',
-        'usuarios.crear',
-        'usuarios.editar',
-        'usuarios.activar',
-
-        'roles.gestionar',
-
-        'equipos.ver',
-        'equipos.crear',
-        'equipos.editar',
-        'equipos.activar',
-
-        'habilitaciones.gestionar',
-
-        'ats.ver_propios',
-        'ats.ver_todos',
-        'ats.crear',
-        'ats.cerrar_propios',
-        'ats.revisar',
-
-        'reportes.ver',
-    ];
-
-    foreach ($permissions as $permission) {
-        Gate::define(
-            $permission,
-            fn (User $user): bool => $user->hasPermission($permission)
-        );
+    {
+        //
     }
-}
 }

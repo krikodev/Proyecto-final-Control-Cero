@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
@@ -26,14 +26,13 @@ class DashboardController extends Controller
             ];
 
             $recentUsers = User::query()
-                ->with('role:id,name')
+                ->with('roles:id,name')
                 ->latest('id')
                 ->limit(5)
                 ->get([
                     'id',
                     'name',
                     'last_name',
-                    'role_id',
                     'is_active',
                 ]);
         }

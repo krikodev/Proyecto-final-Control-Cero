@@ -3,21 +3,22 @@
 @section('title', 'Iniciar sesión · Control ATS')
 
 @section('content')
-    <div class="heading">
-        <h1>Inicia sesión</h1>
-        <p>Ingresa tus credenciales para continuar.</p>
+    <div class="mb-7 text-center">
+        <h1 class="text-[23px] font-semibold tracking-tight">Inicia sesión</h1>
+        <p class="mt-2 text-sm text-zinc-500">Ingresa tus credenciales para continuar.</p>
     </div>
 
     <form method="POST" action="{{ route('login.store') }}">
         @csrf
 
-        <div class="field">
-            <label for="email">Correo electrónico</label>
+        <div class="mb-5">
+            <label for="email" class="label">Correo electrónico</label>
 
             <input
                 id="email"
                 name="email"
                 type="email"
+                class="input"
                 value="{{ old('email') }}"
                 placeholder="nombre@empresa.com"
                 autocomplete="username"
@@ -31,19 +32,20 @@
             >
 
             @error('email')
-                <p id="email-error" class="error" role="alert">
+                <p id="email-error" class="field-error" role="alert">
                     {{ $message }}
                 </p>
             @enderror
         </div>
 
-        <div class="field">
-            <label for="password">Contraseña</label>
+        <div class="mb-5">
+            <label for="password" class="label">Contraseña</label>
 
             <input
                 id="password"
                 name="password"
                 type="password"
+                class="input"
                 placeholder="Ingresa tu contraseña"
                 autocomplete="current-password"
                 required
@@ -54,18 +56,18 @@
             >
 
             @error('password')
-                <p id="password-error" class="error" role="alert">
+                <p id="password-error" class="field-error" role="alert">
                     {{ $message }}
                 </p>
             @enderror
         </div>
 
-        <button type="submit" class="button">
+        <button type="submit" class="btn-primary w-full">
             Iniciar sesión
         </button>
     </form>
 
-    <p class="footer">
+    <p class="mt-6 text-center text-xs text-zinc-500">
         ¿Necesitas acceso? Contacta al administrador.
     </p>
 @endsection

@@ -2,11 +2,11 @@
 
 namespace App\Services\Users;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class UpdateUserStatusService
 {
@@ -42,10 +42,10 @@ class UpdateUserStatusService
             }
 
             if (! $isActive) {
-                if ((int) $account->role_id === (int) $adminRole->id) {
+                if ($account->hasRole($adminRole)) {
                     $activeAdmins = User::query()
-                        ->where('role_id', $adminRole->id)
                         ->where('is_active', true)
+                        ->whereHas('roles', fn ($query) => $query->where('roles.id', $adminRole->id))
                         ->lockForUpdate()
                         ->get(['id']);
 

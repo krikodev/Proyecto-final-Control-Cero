@@ -2,11 +2,100 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-@source "../**/*.blade.php";
-@source "../**/*.js";
-@source "../**/*.vue";
+@source '../**/*.blade.php';
+@source '../**/*.js';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer base {
+    body {
+        @apply bg-zinc-50 font-sans text-zinc-900 antialiased;
+    }
+}
+
+@layer components {
+    /* ── Botones ─────────────────────────────────────────────── */
+    .btn-primary {
+        @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-zinc-900 bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500;
+    }
+
+    .btn-secondary {
+        @apply inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-[13px] font-medium text-zinc-700 transition-colors hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400;
+    }
+
+    .btn-danger {
+        @apply border-red-200 text-red-700 hover:bg-red-50;
+    }
+
+    .btn-logout {
+        @apply w-full cursor-pointer rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] text-zinc-700 transition-colors hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400;
+    }
+
+    /* ── Formularios ─────────────────────────────────────────── */
+    .label {
+        @apply mb-2 block text-[13px] font-semibold text-zinc-800;
+    }
+
+    .input {
+        @apply block min-h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-2 focus:outline-zinc-200 focus:outline-offset-2;
+    }
+
+    .input[aria-invalid='true'] {
+        @apply border-red-500;
+    }
+
+    .field-error {
+        @apply mt-1.5 block text-xs font-medium text-red-600;
+    }
+
+    .field-help {
+        @apply mt-2 text-xs leading-relaxed text-zinc-500;
+    }
+
+    /* ── Superficies ─────────────────────────────────────────── */
+    .panel {
+        @apply rounded-xl border border-zinc-200 bg-white;
+    }
+
+    .panel-header {
+        @apply border-b border-zinc-100 px-6 py-5;
+    }
+
+    .badge {
+        @apply inline-flex rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600;
+    }
+
+    .badge-active {
+        @apply bg-emerald-100 text-emerald-700;
+    }
+
+    /* ── Navegación ──────────────────────────────────────────── */
+    .nav-link {
+        @apply flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100;
+    }
+
+    .nav-link-active {
+        @apply bg-zinc-100 text-zinc-900;
+    }
+
+    /* ── Avisos ──────────────────────────────────────────────── */
+    .notice-success {
+        @apply mt-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800;
+    }
+
+    .notice-error {
+        @apply mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800;
+    }
+
+    /* ── Tablas ──────────────────────────────────────────────── */
+    .table-th {
+        @apply bg-zinc-50 px-6 py-3 text-left text-[13px] font-medium text-zinc-500;
+    }
+
+    .table-td {
+        @apply border-t border-zinc-100 px-6 py-4 text-[13px];
+    }
 }
